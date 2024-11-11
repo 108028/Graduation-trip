@@ -20,20 +20,21 @@
         background-color: #333;
         padding: 10px 20px;
     }
-    .navbar .date {
-        font-size: 18px;
-    }
-    .navbar .download-button {
+    .navbar .button-group button {
         background-color: #007bff;
         color: #fff;
         padding: 10px 15px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        margin-right: 5px;
+    }
+    .navbar .download-button {
+        background-color: #28a745;
     }
     /* 圖片展示區樣式 */
     .gallery {
-        display: grid;
+        display: none;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 10px;
         padding: 20px;
@@ -52,35 +53,88 @@
         margin: 10px 0;
         font-size: 14px;
     }
+    /* 提示框樣式 */
+    .no-images {
+        display: none;
+        background-color: #ff4d4d;
+        color: #fff;
+        padding: 15px;
+        margin: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .active {
+        display: grid;
+    }
 </style>
 </head>
 <body>
 
 <!-- 導航列 -->
 <div class="navbar">
-    <div class="date">11/13, 11/14, 11/15</div>
+    <div class="button-group">
+        <button onclick="showGallery('11/13')">11/13</button>
+        <button onclick="showGallery('11/14')">11/14</button>
+        <button onclick="showGallery('11/15')">11/15</button>
+    </div>
     <button class="download-button" onclick="downloadAll()">下載全部 (ZIP)</button>
 </div>
 
-<!-- 圖片展示區 -->
-<div class="gallery">
-    <div class="gallery-item">
-        <img src="圖片" alt="圖片 1">
-        <p>描述 1</p>
-    </div>
-    <div class="gallery-item">
-        <img src="圖片" alt="圖片 2">
-        <p>描述 2</p>
-    </div>
-    <div class="gallery-item">
-        <img src="圖片" alt="圖片 3">
-        <p>描述 3</p>
-    </div>
-    <!-- 可以根據需求添加更多圖片 -->
+<!-- 提示框：沒有圖片時顯示 -->
+<div id="no-images" class="no-images">
+    沒有可顯示的圖片！
 </div>
 
-<!-- JavaScript 下載全部按鈕功能 -->
+<!-- 圖片展示區 -->
+<div id="gallery" class="gallery"></div>
+
+<!-- JavaScript -->
 <script>
+    // 定義圖片資料
+    const galleryData = {
+        "11/13": [
+            //{ src: "圖片1.jpg", description: "描述 1" },
+        ],
+        "11/14": [
+            
+        ],
+        "11/15": [
+            
+        ]
+    };
+
+    function showGallery(date) {
+        const gallery = document.getElementById('gallery');
+        const noImages = document.getElementById('no-images');
+        gallery.innerHTML = ''; // 清空之前的內容
+        gallery.classList.add('active'); // 顯示圖片區域
+        noImages.style.display = 'none'; // 隱藏提示框
+
+        // 檢查該日期是否有圖片
+        if (galleryData[date].length === 0) {
+            noImages.style.display = 'block'; // 顯示提示框
+        } else {
+            // 遍歷選定日期的圖片資料
+            galleryData[date].forEach(item => {
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item');
+
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.alt = item.description;
+
+                const description = document.createElement('p');
+                description.textContent = item.description;
+
+                galleryItem.appendChild(img);
+                galleryItem.appendChild(description);
+                gallery.appendChild(galleryItem);
+            });
+        }
+    }
+
     function downloadAll() {
         // 替換成實際 ZIP 檔案的下載連結
         window.location.href = 'all_images.zip';
